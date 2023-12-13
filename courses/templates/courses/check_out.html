@@ -1,0 +1,119 @@
+{% extends 'courses/base.html' %}
+{% load course_custom_tags %}
+{% block title %}
+Реєстрація на курс
+{% endblock %}
+
+{% block content %}
+<style>
+    .display {
+        font-size: 1.2rem
+    }
+    .alert {
+        background-color: #ffcccc; /* Червоний колір фону для помилки */
+        padding: 10px; /* Додатковий відступ для кращого вигляду */
+        margin-top: 20px; /* Відступ зверху для відокремлення від іншого вмісту */
+        border-color: #ffcccc;
+        color: black;
+        font-size: 1.2rem
+    }
+</style>
+
+<div class="container mt-4 mb-3">
+    <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="couponModalLabel">Введіть купон</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="couponForm" action="" method="GET">
+                        <div class="mb-3">
+                            <label for="couponCode" class="form-label">Купон:</label>
+                            <input type="text" class="form-control" id="couponCode" name="couponcode">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Застосувати</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+            <div class="card ml-auto" style="width: 28rem;">
+                <img class="card-img-top" src="{{ course.thumbnail.url }}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.name }}</h5>
+                    <p class="card-text m-0 p-0">
+                        Знижка {{ course.discount }}%
+                        <br>
+                        <span class="price">
+                            <del>{{ course.price|uah }}</del>
+                            &nbsp;
+                            <span>{% cal_sellprice course.price course.discount as value %} {{ value|uah }}</span>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-auto">
+            <div class="card">
+                <div class="card-body">
+            <p class="display-5">{{ course.name }}</p>
+            <hr>
+            <p class="display-5">
+                Чого ви навчитеся:
+                <ol class="display">
+                    {% for l in course.learning_set.all %}
+                    <li class="li">{{ l.description }}</li>
+                    {% endfor %}
+                </ol>
+            </p>
+            <hr>
+            {% if coupon_code_message %}
+                <div class="alert alert-info">
+                    {{coupon_code_message}}
+                </div>
+            {% endif %}
+            <p class="display-5">Сума до сплати : <b>{% cal_sellprice course.price course.discount as value %}{{ value|uah }}</b></p>
+            <a id="continuePaymentBtn" class="btn btn-light border" href="#">Перейти до оплати</a>
+            <a id="couponLink" class="btn btn-light border" href="#">Або використайте купон</a>
+            <div id="couponField" style="display: none;">
+                
+        </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% if error is not None %}
+<script>
+    window.onload = () => {
+        alert("{{ error }}")
+    }
+</script>
+{% endif %}
+
+<script>
+    function showCouponModal() {
+        var couponModal = new bootstrap.Modal(document.getElementById('couponModal'));
+        couponModal.show();
+    }
+
+    document.getElementById('couponLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        showCouponModal();
+    });
+
+    document.getElementById('continuePaymentBtn').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevents the default action
+    });
+</script>
+
+{% endblock %}

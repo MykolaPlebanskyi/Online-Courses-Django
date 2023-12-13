@@ -1,0 +1,90 @@
+{% extends 'courses/base.html' %}
+{% comment %} {% load course_custom_tags %} {% endcomment %}
+
+{% block title %}
+    Профіль
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .custom-avatar {
+        width: 150px; /* Задайте бажаний розмір */
+        height: 150px; /* Задайте бажаний розмір */
+    }
+    input[type="file"] {
+        display: none;
+    }
+
+    .btn-dark {
+        background-color: #242020;
+        {% comment %} color: black; {% endcomment %}
+        {% comment %} border: solid; {% endcomment %}
+        {% comment %} padding: 2px; {% endcomment %}
+        margin-bottom: 10px;
+        cursor: pointer;
+    } 
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0 text-center">Профіль користувача</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row gy-4 mx-auto">
+                        <div class="col-md-4 text-center">
+                            <img src="{{ user.profile.avatar.url }}" class="img-fluid rounded-circle custom-avatar mb-3" alt="Аватар">
+                            <form method="post" enctype="multipart/form-data" class="mb-3">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="avatar" class="btn btn-dark btn-block btn-sm">Змінити аватар</label>
+                                    <input type="file" class="form-control-file" id="avatar" name="avatar">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block btn-sm" id="saveBtn">Зберегти</button>
+                                <button type="button" class="btn btn-secondary btn-block btn-sm" id="cancelBtn">Скасувати</button>
+                            </form>
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="card-title">Особиста інформація</h4>
+                            <hr>
+                            <p class="card-text"><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+                            <p class="card-text"><strong>Електронна пошта:</strong> {{ user.email }}</p>
+                            <p class="card-text"><strong>Дата реєстрації:</strong> {{ user.profile.registration_date }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Отримуємо посилання на всі елементи, які нам потрібні
+    var fileInput = document.getElementById('avatar');
+    var img = document.querySelector('.custom-avatar');
+    var saveBtn = document.getElementById('saveBtn');
+    var cancelBtn = document.getElementById('cancelBtn');
+
+    // Функція, яка викликається при зміні файлу
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            }
+
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    });
+
+    // Функція для скасування вибору файлу
+    cancelBtn.addEventListener('click', function () {
+        img.src = "{{ user.profile.avatar.url }}";
+        fileInput.value = '';
+    });
+</script>
+
+{% endblock %}

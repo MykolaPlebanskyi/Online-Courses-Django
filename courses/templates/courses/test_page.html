@@ -1,0 +1,61 @@
+{% extends 'courses/base.html' %}
+
+{%block title%}
+Тест до курсу: {{ course.name }}
+{% endblock %}
+
+{% block content %}
+
+
+<style>
+    .container-fluid {
+        width: 1600px;
+    }
+
+      .btn-dark{
+        background-color: gray;
+        border:none
+    }
+
+</style>
+
+<div class="container mt-3 mb-3">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Тест до курсу: {{ course.name }}</h4>
+            </div>
+        </div>
+    {% if test %}
+        <div class="col mx-auto">
+        <form action="{% url 'process_test' course_id=course.id %}" method="post">
+            {% csrf_token %}
+                {% for question in test.questions.all %}
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title"> </h4>
+                <h5>{{ forloop.counter }}. {{ question.text }}</h5>
+                {% for answer in question.answer_set.all %}
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="question_{{ question.id }}" value="{{ answer.id }}">
+                    <label class="form-check-label">{{ answer.text }}</label><br>
+                </div>
+                {% endfor %}
+            </div>
+            </div>
+            {% endfor %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+            <input class="btn btn-dark" type="submit" value="Надіслати">
+        </div>
+    </div>
+    </div>
+        </form>
+    {% else %}
+        <p>Немає тестів для цього курсу.</p>
+    {% endif %}
+    </div>
+    </div>
+</div>
+
+{% endblock %}

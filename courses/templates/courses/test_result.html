@@ -1,0 +1,82 @@
+{% extends 'courses/base.html' %}
+{% block title %}
+Результати тесту
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Ваші CSS стилі тут */
+    .correct {
+        color: green;
+    }
+    .incorrect {
+        color: red;
+    }
+    
+    .text{
+        font-size: 18px;
+    }
+
+</style>
+
+<div class="container mt-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Результати тесту</h4>
+            </div>
+        </div>
+
+    <ul class="list-group">
+        <li class="list-group-item">Правильних відповідей: {{ correct_answers }}/{{ total_questions }}</li>
+        <li class="list-group-item">Відсоток правильних відповідей: {{ percentage }}%</li>
+    </ul>
+
+        <div class="card mt-3 mb-3">
+            <div class="card-body">
+                <h4 class="card-title">Деталі питаннів</h4>
+            </div>
+
+            {% for question in question_data %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ forloop.counter }}. {{ question.question_text }}</h5>
+                <div class="card-text">
+                <ul class="list-unstyled">
+                    <ul>
+                    {% for answer in question.answers %}
+                        {% if answer.is_correct %}
+                            {% if answer in question.answers %}
+                                <li class="correct">{{ answer.text }}
+                                {% if answer in question.user_answers %}
+                                (Ваш вибір)
+                                {% endif %}
+                            </li>
+                            {% else %}
+                                <li>{{ answer.text }}</li>
+                            {% endif %}
+                        {% else %}
+                            {% if answer in question.user_answers %}
+                                <li class="incorrect">{{ answer.text }} (Ваш вибір)</li>
+                            {% else %}
+                                <li>{{ answer.text }}</li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                </ul>
+                </ul>
+                <span class="text">
+                Правильна відповідь:
+                    {% for correct_answer in question.correct_answers %}
+                        {{ correct_answer.text }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+            </div>
+            </div>
+            {% endfor %}
+    </div>
+</div>
+{% comment %} <p> {% endcomment %}
+{% endblock %}
+{% comment %} <p> {% endcomment %}

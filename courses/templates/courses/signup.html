@@ -1,0 +1,63 @@
+{% extends 'courses/base.html' %}
+{% load course_custom_tags %}
+
+{% block title %}
+Реєстрація
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="display-1 text-center">Реєстрація</h1>
+                    <hr>
+                    <form action="/signup" method="POST" class="mt-4" id="registrationForm">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <strong>Ой! Виникла помилка:</strong>
+                                <ul>
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Ім'я користувача</label>
+                            <input type="text" class="form-control" id="id_username" name="username" required
+                                oninvalid="this.setCustomValidity('Це поле (Ім\'я користувача) не може бути пустим')"
+                                oninput="this.setCustomValidity('')">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Електронна пошта</label>
+                            <input type="email" class="form-control" id="id_email" name="email" required
+                                oninvalid="this.setCustomValidity('Це поле (Електронна пошта) не може бути пустим')"
+                                oninput="this.setCustomValidity('')">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Пароль</label>
+                            <input type="password" class="form-control" id="id_password1" name="password1" required
+                                oninvalid="this.setCustomValidity('Це поле (Пароль) не може бути пустим')"
+                                oninput="this.setCustomValidity('')">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Підтвердіть пароль</label>
+                            <input type="password" class="form-control" id="id_password2" name="password2" required
+                                oninvalid="this.setCustomValidity('Це поле (Підтвердіть пароль) не може бути пустим')"
+                                oninput="this.setCustomValidity('')">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-secondary" id="registerBtn" value="Register">Зареєструватися</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
