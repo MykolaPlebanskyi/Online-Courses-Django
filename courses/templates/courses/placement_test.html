@@ -1,0 +1,56 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Тест з {{ test.get_language_display }}{% endblock %}
+
+{% block content %}
+<style>
+    .container-fluid {
+        width: 1600px;
+    }
+
+    .btn-dark {
+        background-color: gray;
+        border: none;
+    }
+</style>
+
+<div class="container mt-3 mb-3">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title text-center">{{ test.name }} ({{ test.get_language_display }})</h4>
+        </div>
+    </div>
+
+    {% if test.questions.all %}
+        <div class="col mx-auto">
+            <form method="post" action="{% url 'placement_take_test' language=test.language %}">
+                {% csrf_token %}
+                {% for question in test.questions.all %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title"> </h4>
+                            <h5>{{ forloop.counter }}. {{ question.text }}</h5>
+                            {% for answer in question.answers.all %}
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="question_{{ question.id }}" value="{{ answer.id }}">
+                                    <label class="form-check-label">{{ answer.text }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">Завершити тест</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% else %}
+        <p class="text-center mt-3">Немає тестових запитань.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

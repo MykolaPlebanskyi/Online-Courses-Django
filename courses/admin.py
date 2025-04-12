@@ -1,17 +1,23 @@
 from django.contrib import admin
-from courses.models import Course , UserCourse , Learning , Video, Test, Question, Answer, CouponCode
+from courses.models import Course, UserCourse, Learning, Video, Test, Question, Answer, CouponCode, Profile, Settings, \
+    PlacementTest, PlacementQuestion, PlacementAnswer
 from django.utils.html import format_html
+
+
 # Register your models here.
 
 class VideoAdmin(admin.TabularInline):
     model = Video
 
+
 class LearningAdmin(admin.TabularInline):
     model = Learning
+
 
 class AnswerInline(admin.TabularInline):
     model = Answer
     extra = 4  # Кількість полів для введення відповідей
+
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
@@ -29,10 +35,12 @@ class QuestionInline(admin.TabularInline):
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
     inlines = [QuestionInline]
-    
+
+
 class TestInline(admin.TabularInline):
     model = Test
     extra = 1
+
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -48,7 +56,7 @@ class CourseAdmin(admin.ModelAdmin):
 
     get_discount.short_description = "Discount"
     get_price.short_description = "Price"
-    
+
 
 # class PaymentAdmin(admin.ModelAdmin):
 #     model = Payment   
@@ -65,21 +73,61 @@ class CourseAdmin(admin.ModelAdmin):
 #     get_user.short_description = "User"
 
 class UserCourseAdminModel(admin.ModelAdmin):
-    model = UserCourse   
-    list_display = ['click', 'get_user', 'get_course'] 
+    model = UserCourse
+    list_display = ['click', 'get_user', 'get_course']
     list_filter = ['course']
 
     def get_user(self, usercourse):
         return format_html(f"<a target='_blank' href='/admin/auth/user/{usercourse.user.id}'>{usercourse.user}</a>")
-    
+
     def click(self, usercourse):
         return "Click to Open"
-    
+
     def get_course(self, usercourse):
-        return format_html(f"<a target='_blank' href='/admin/courses/course/{usercourse.course.id}'>{usercourse.course}</a>")
+        return format_html(
+            f"<a target='_blank' href='/admin/courses/course/{usercourse.course.id}'>{usercourse.course}</a>")
 
     get_course.short_description = "Course"
     get_user.short_description = "User"
 
-admin.site.register(UserCourse , UserCourseAdminModel)
-admin.site.register(CouponCode)
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'start_test', 'balance', 'coins')
+
+
+@admin.register(Settings)
+class ProfileAdmin(admin.ModelAdmin):
+    # list_display = ('user', 'balance', 'coins')
+    model = Settings
+
+
+class PlacementAnswerInline(admin.TabularInline):  # Відображення відповідей у вигляді таблиці
+    model = PlacementAnswer
+    extra = 4  # Додає одну порожню відповідь для зручного заповнення
+
+
+@admin.register(PlacementQuestion)
+class QuestionAdmin(admin.ModelAdmin):
+    model = PlacementQuestion
+    inlines = [PlacementAnswerInline]
+    extra = 1  # Відображати по замовчуванню одне поле для питання при створенні/редагуванні
+
+
+class PlacementQuestionInline(admin.TabularInline):
+    model = PlacementQuestion
+    inlines = [PlacementAnswerInline]
+    extra = 1
+
+
+@admin.register(PlacementTest)
+class TestAdmin(admin.ModelAdmin):
+    inlines = [PlacementQuestionInline]
+
+
+class PlacementTestInline(admin.TabularInline):
+    model = PlacementTest
+    extra = 1
+
+
+

@@ -78,14 +78,13 @@
             <hr>
             {% if coupon_code_message %}
                 <div class="alert alert-info">
-                    {{coupon_code_message}}
+                    {{coupon_code_message}} 
                 </div>
             {% endif %}
             <p class="display-5">Сума до сплати : <b>{% cal_sellprice course.price course.discount as value %}{{ value|uah }}</b></p>
-            <a id="continuePaymentBtn" class="btn btn-light border" href="#">Перейти до оплати</a>
+            <a id="continuePaymentBtn" class="btn btn-light border" href="{% url 'pay_with_balance' course.id %}">Перейти до оплати</a>
             <a id="couponLink" class="btn btn-light border" href="#">Або використайте купон</a>
             <div id="couponField" style="display: none;">
-                
         </div>
         </div>
     </div>
@@ -100,6 +99,13 @@
 </script>
 {% endif %}
 
+{#{% if error %}#}
+{#    <div class="alert">#}
+{#        {{ error }}#}
+{#    </div>#}
+{#{% endif %}#}
+    
+    
 <script>
     function showCouponModal() {
         var couponModal = new bootstrap.Modal(document.getElementById('couponModal'));
@@ -114,6 +120,72 @@
     document.getElementById('continuePaymentBtn').addEventListener('click', function(event) {
         event.preventDefault(); // Prevents the default action
     });
+    
+    // Обробка натискання кнопки "Перейти до оплати"
+    document.getElementById('continuePaymentBtn').addEventListener('click', function(event) {
+        event.preventDefault(); // Запобігаємо звичайній поведінці кнопки
+    
+        // Отримуємо значення введеного купона
+        var couponCode = document.getElementById('couponCode').value;
+    
+        // Перевірка, чи є введений купон
+        if (couponCode.trim() !== "") {
+            // Якщо купон введено, можна додати логіку для його валідації або застосування
+            alert('Використано купон: ' + couponCode);
+        } else {
+            // Якщо купон не введено, переходимо до оплати
+            window.location.href = "{% url 'pay_with_balance' course.id %}"; // Перехід до сторінки оплати
+        }
+    });
 </script>
+{#<script>#}
+{#    document.addEventListener("DOMContentLoaded", function () {#}
+{#        document.getElementById('continuePaymentBtn').addEventListener('click', function(event) {#}
+{#            event.preventDefault(); // Зупиняємо перехід за посиланням#}
+{##}
+{#            let url = this.getAttribute("href");#}
+{##}
+{#            // Виводимо URL для перевірки#}
+{#            console.log("Sending request to:", url);#}
+{##}
+{#            fetch(url, {#}
+{#                method: "POST",#}
+{#                headers: {#}
+{#                    "X-CSRFToken": "{{ csrf_token }}",  // Перевірте, чи правильно передається CSRF токен#}
+{#                    "Content-Type": "application/json"#}
+{#                },#}
+{#                body: JSON.stringify({})  // Тіло запиту, можна додавати додаткові дані, якщо необхідно#}
+{#            })#}
+{#            .then(response => {#}
+{#                if (!response.ok) {#}
+{#                    throw new Error('Network response was not ok');#}
+{#                }#}
+{#                return response.json();#}
+{#            })#}
+{#            .then(data => {#}
+{#                // Перевіряємо, чи статус успішний#}
+{#                if (data.status === "success") {#}
+{#                    // Якщо перенаправлення успішне, то робимо редирект#}
+{#                    console.log("Redirecting to:", data.redirect_url); // Для перевірки#}
+{#                    window.location.href = data.redirect_url;#}
+{#                } else {#}
+{#                    // Якщо статус не успішний, виводимо повідомлення про помилку#}
+{#                    let errorDiv = document.createElement("div");#}
+{#                    errorDiv.className = "alert alert-danger"; // Для стилю#}
+{#                    errorDiv.innerText = data.message;#}
+{##}
+{#                    let container = document.querySelector(".container.mt-4.mb-3");#}
+{#                    container.innerHTML = "";  // Очищаємо контейнер#}
+{#                    container.appendChild(errorDiv);  // Додаємо повідомлення про помилку#}
+{#                }#}
+{#            })#}
+{#            .catch(error => {#}
+{#                // Обробляємо помилки#}
+{#                console.error("Помилка:", error);#}
+{#            });#}
+{#        });#}
+{#    });#}
+{#</script>#}
+
 
 {% endblock %}

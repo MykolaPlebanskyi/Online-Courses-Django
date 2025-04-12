@@ -1,5 +1,4 @@
 {% extends 'courses/base.html' %}
-{% comment %} {% load course_custom_tags %} {% endcomment %}
 
 {% block title %}
     Профіль
@@ -9,21 +8,17 @@
 
 <style>
     .custom-avatar {
-        width: 150px; /* Задайте бажаний розмір */
-        height: 150px; /* Задайте бажаний розмір */
+        width: 200px;
+        height: 200px;
     }
     input[type="file"] {
         display: none;
     }
-
     .btn-dark {
         background-color: #242020;
-        {% comment %} color: black; {% endcomment %}
-        {% comment %} border: solid; {% endcomment %}
-        {% comment %} padding: 2px; {% endcomment %}
         margin-bottom: 10px;
         cursor: pointer;
-    } 
+    }
 </style>
 
 <div class="container mt-5">
@@ -50,40 +45,99 @@
                         <div class="col-md-8">
                             <h4 class="card-title">Особиста інформація</h4>
                             <hr>
-                            <p class="card-text"><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+                            <p class="card-text"><strong>Логін користувача:</strong> {{ user.username }}</p>
+                            <p class="card-text"><strong>Ім'я :</strong> {{ user.first_name }}</p>
+                            <p class="card-text"><strong>Прізвище:</strong> {{ user.last_name }}</p>
                             <p class="card-text"><strong>Електронна пошта:</strong> {{ user.email }}</p>
                             <p class="card-text"><strong>Дата реєстрації:</strong> {{ user.profile.registration_date }}</p>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <!-- Фінанси -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Фінанси</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6>Баланс гривень:</h6>
+                            <p class="mb-0 fw-bold">{{ user.profile.balance }} ₴</p>
+                        </div>
+                        <img src="/static/courses/additional/money.png" alt="Money" style="width: 40px; height: 40px;">
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6>Баланс монет:</h6>
+                            <p class="mb-0 fw-bold">{{ user.profile.coins }}</p>
+                        </div>
+                        <img src="/static/courses/additional/coin.png" alt="Coins" style="width: 40px; height: 40px;">
+                    </div>
+                    
+                    <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#exchangeModal">
+                        Обміняти монети
+                    </button>
+                </div>
+            </div>
+            <!-- Кінець фінансів -->
         </div>
     </div>
 </div>
+
+<!-- Модальне вікно для обміну монет -->
+<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exchangeModalLabel">Обмін монет на гривні</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Курс обміну: <strong id="exchangeRate">1 монета = 0.5 ₴</strong></p>
+                <div class="form-group">
+                    <label for="coinAmount">Введіть кількість монет:</label>
+                    <input type="number" id="coinAmount" class="form-control" min="1" max="{{ user.profile.coins }}">
+                </div>
+                <p class="mt-2">Ви отримаєте: <strong id="convertedAmount">0</strong> ₴</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-primary" id="confirmExchange">Обміняти</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Отримуємо посилання на всі елементи, які нам потрібні
-    var fileInput = document.getElementById('avatar');
-    var img = document.querySelector('.custom-avatar');
-    var saveBtn = document.getElementById('saveBtn');
-    var cancelBtn = document.getElementById('cancelBtn');
-
-    // Функція, яка викликається при зміні файлу
-    fileInput.addEventListener('change', function () {
-        if (fileInput.files && fileInput.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                img.src = e.target.result;
-            }
-
-            reader.readAsDataURL(fileInput.files[0]);
-        }
+    document.getElementById('coinAmount').addEventListener('input', function() {
+        let coinAmount = parseInt(this.value) || 0;
+        let rate = 0.5;
+        document.getElementById('convertedAmount').textContent = (coinAmount * rate).toFixed(2);
     });
 
-    // Функція для скасування вибору файлу
-    cancelBtn.addEventListener('click', function () {
-        img.src = "{{ user.profile.avatar.url }}";
-        fileInput.value = '';
+    document.getElementById('confirmExchange').addEventListener('click', function() {
+        let coinAmount = parseInt(document.getElementById('coinAmount').value) || 0;
+        if (coinAmount > 0 && coinAmount <= {{ user.profile.coins }}) {
+            fetch('/exchange/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ coins: coinAmount })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Помилка при обміні. Спробуйте ще раз.');
+                }
+            });
+        } else {
+            alert('Некоректна кількість монет!');
+        }
     });
 </script>
 

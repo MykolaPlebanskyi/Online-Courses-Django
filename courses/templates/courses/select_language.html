@@ -1,0 +1,39 @@
+{% extends 'courses/base.html' %}
+{% block title %}Вибір мови тесту{% endblock %}
+
+{% block content %}
+<style>
+    .language-card {
+        max-width: 600px;
+        margin: auto;
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-language {
+        width: 100%;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 12px;
+        transition: 0.3s;
+        border-radius: 10px;
+    }
+
+    .btn-language:hover {
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="language-card text-center">
+        <h2 class="mb-3">Оберіть мову тесту</h2>
+        <div class="d-grid gap-3">
+            {% for code, name in languages %}
+                <a href="{% url 'placement_test' language=code %}" class="btn btn-primary btn-language">{{ name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

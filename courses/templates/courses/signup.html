@@ -28,8 +28,20 @@
                             </div>
                         {% endif %}
                         <div class="mb-3">
-                            <label for="id_username" class="form-label">Ім'я користувача</label>
+                            <label for="id_username" class="form-label">Логін користувача</label>
                             <input type="text" class="form-control" id="id_username" name="username" required
+                                oninvalid="this.setCustomValidity('Це поле (Логін користувача) не може бути пустим')"
+                                oninput="this.setCustomValidity('')">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_first_name" class="form-label">Ім'я</label>
+                            <input type="text" class="form-control" id="id_first_name" name="first_name" required
+                                oninvalid="this.setCustomValidity('Це поле (Ім\'я користувача) не може бути пустим')"
+                                oninput="this.setCustomValidity('')">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_last_name" class="form-label">Прізвище</label>
+                            <input type="text" class="form-control" id="id_last_name" name="last_name" required
                                 oninvalid="this.setCustomValidity('Це поле (Ім\'я користувача) не може бути пустим')"
                                 oninput="this.setCustomValidity('')">
                         </div>

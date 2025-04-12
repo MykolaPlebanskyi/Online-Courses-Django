@@ -1,11 +1,12 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms
-from django.contrib.auth import authenticate , login
+from django.contrib.auth import authenticate, login
 from django.forms import ValidationError
 
+
 class LoginForm(AuthenticationForm):
-    
+
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')

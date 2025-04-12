@@ -1,82 +1,124 @@
 {% extends 'courses/base.html' %}
-{% load course_custom_tags %}
-{%block title%}
-Курси
-{% endblock %}
+{% block title %}Головна{% endblock %}
 
-{%block content%}
-
+{% block content %}
 <style>
-    .price {
-        font-size: 20px;
+    body {
+        {#font-family: 'Poppins', sans-serif;#}
     }
-    {% comment %} .container {
-        background-image: url('/static/courses/files/thumbnail/123.jpg');
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/static/images/hero-bg.jpg');
         background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        /* Додайте інші стилі, які вам потрібні для блоку контенту */
-        /* Наприклад, розмір, відступи, кольори тексту і т. д. */
-    } {% endcomment %}
+        background-position: center;
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .hero-section h1 {
+        font-size: 30px;
+        font-weight: bold;
+    }
+    .hero-section p {
+        font-size: 18px;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .info-section {
+        padding: 40px 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .info-box {
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    .info-section h3 {
+        font-weight: bold;
+        color: #0056b3;
+        margin-bottom: 15px;
+    }
+    .info-section p {
+        font-size: 18px;
+        color: #333;
+    }
+    .info-icon {
+        font-size: 40px;
+        color: #007bff;
+        margin-bottom: 10px;
+    }
+    .test-section {
+        text-align: center;
+        margin-top: 40px;
+        padding: 30px;
+        background: #007bff;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .test-section a {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: white;
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+    .test-section a:hover {
+        background: #0056b3;
+        color: white;
+    }
 </style>
 
-<div class="container mt-3 mb-3">
-    {% comment %} <div class="card mb-3 mx-auto p-2" style="width: 18rem;">
-        <div class="card-body">
-          <h2 class="card-title">Доступні курси</h2>
-        </div>
-      </div> {% endcomment %}
-      
-    <div class="row gy-4 mx-auto">
-        {% for course in courses %}
-        <div class="col mx-auto">
-            <div class="card mx-auto" style="width: 18rem;">
-                <img class="card-img-top" src="{{course.thumbnail.url}}" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">{{course.name}}</h5>
-                    <p class="card-text m-0 p-0">
-                        Знижка {{course.discount}}%
-                        <br>
-                        <span class="price">
-                            <del>{{course.price|uah}}</del>
-                            &nbsp;
+<div class="container mt-5 mb-5">
+    <div class="hero-section">
+        <h1 class="mb-4">Ласкаво просимо до "Онлайн курсів"</h1>
+        <p class="lead">
+            Наша компанія має великий досвід у сфері онлайн-навчання. Ми створюємо курси, що допомагають студентам та
+            професіоналам розвивати свої навички та здобувати нові знання у зручному форматі.
+        </p>
+    </div>
 
-                            <span>{% cal_sellprice course.price course.discount as value %} {{value|uah}}</span>
-                        </span>
-
-                    </p>
-                </div>
-
-                <div class="card-footer p-0">
-                    {% is_enrolled request course as enrolled %}
-
-
-                    <div class="row g-0 text-center">
-                        {% if enrolled %}
-                        <div class="col border-end">
-                            <div class="d-grid gap-2">
-                            <a href="/course/{{course.slug}}" class="btn btn-light btn-block">Розпочати курс</a>
-                        </div>
-                        </div>
-                        {% else %}
-                        <div class="col border-end">
-                            <div class="d-grid gap-2">
-                            <a href="/check-out/{{course.slug}}" class="btn btn-primary btn-light">Зареєструватись</a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-grid gap-2">
-                            <a href="/course/{{course.slug}}" class="btn btn-light  btn-block">Переглянути</a>
-                        </div>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                </div>
+    <div class="row mt-5 info-section text-center">
+        <div class="col-md-4">
+            <div class="info-box">
+                <div class="info-icon">💡</div>
+                <h3>Якісні матеріали</h3>
+                <p>Наші курси створені експертами у своїх галузях, тому ви отримаєте тільки актуальні та корисні знання.</p>
             </div>
         </div>
-        {% endfor %}
+        <div class="col-md-4">
+            <div class="info-box">
+                <div class="info-icon">🎓</div>
+                <h3>Експертний підхід</h3>
+                <p>Наші курси розроблені професіоналами з великим досвідом, які знають, що потрібно для успіху у вашій сфері.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-box">
+                <div class="info-icon">🌍</div>
+                <h3>Навчайтеся з будь-якої точки світу</h3>
+                <p>Доступ до курсів 24/7 дозволяє вам навчатися у зручний для вас час, незалежно від місця знаходження.</p>
+            </div>
+        </div>
+    </div>
+
+<div class="test-section">
+    <h2>Не знаєте, який курс вам підходить?</h2>
+    <p>Ви можете:</p>
+    <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-3">
+        <a href="{% url 'courses' %}" class="btn btn-light btn-lg">Переглянути всі курси</a>
+        <a href="{% url 'select_language' %}" class="btn btn-outline-light btn-lg">Пройти тест на рівень</a>
     </div>
 </div>
 
-{%endblock%}
+</div>
+{% endblock %}

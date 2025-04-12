@@ -1,6 +1,27 @@
 from django.db import models
 
+
 class Course(models.Model):
+    LEVELS = [
+        ('a1', 'A1'),
+        ('a2', 'A2'),
+        ('b1', 'B1'),
+        ('b2', 'B2'),
+        ('c1', 'C1'),
+        ('c2', 'C2'),
+    ]
+
+    LANGUAGES = [
+        ('en', 'English'),
+        ('es', 'Spanish'),
+        ('de', 'German'),
+        ('it', 'Italian'),
+        ('cz', 'Czech'),
+        ('tu', 'Turkish'),
+        ('ch', 'Chinese'),
+        ('fr', 'French'),
+        # Додавай інші мови, якщо потрібно
+    ]
     name = models.CharField(max_length=50, null=False)
     slug = models.CharField(max_length=50, null=False, unique=True)
     description = models.CharField(max_length=500, null=True)
@@ -8,14 +29,15 @@ class Course(models.Model):
     discount = models.IntegerField(null=False, default=0)
     active = models.BooleanField(default=False)
     thumbnail = models.ImageField(upload_to="files/thumbnail")
+    level = models.CharField(max_length=50, choices=LEVELS, null=False, default='beginner')
+    language = models.CharField(max_length=2, choices=LANGUAGES, null=False, default='en')
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         verbose_name = 'Курси'
         verbose_name_plural = 'Курси'
-
 
 
 class CourseProperty(models.Model):
@@ -25,8 +47,10 @@ class CourseProperty(models.Model):
     class Meta:
         abstract = True
 
+
 class Learning(CourseProperty):
     pass
+
 
 class Test(models.Model):
     course = models.OneToOneField(Course, on_delete=models.CASCADE, related_name='test', null=True)
@@ -34,18 +58,19 @@ class Test(models.Model):
 
     def __str__(self):
         return f"Тест для {self.course.name}:"
-    
+
     class Meta:
         verbose_name = 'Тести'
         verbose_name_plural = 'Тести'
 
+
 class Question(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='questions')
     text = models.CharField(max_length=200, null=False)
-    
+
     def __str__(self):
         return f"{self.test}, питання: {self.text}"
-    
+
     class Meta:
         verbose_name = 'Питання'
         verbose_name_plural = 'Питання'

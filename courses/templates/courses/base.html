@@ -105,29 +105,47 @@
                 <li class="nav-item">
                   <a class="nav-link active"  aria-current="page" href="/">Головна</a>
                 </li>                
-                
+                <li class="nav-item">
+                  <a class="nav-link active"  aria-current="page" href="/courses">Курси</a>
+                </li>     
               </ul>
 
             <!-- left -->
             <ul class="navbar-nav ml-auto">
-              
               {% if request.user.is_authenticated %}
+              
+            <li class="nav-item d-flex align-items-center">
+              <div class="d-flex align-items-center bg-light px-2 py-1 rounded">
+                <img src="/static/courses/additional/coin.png" alt="Coins" style="width: 20px; height: 20px; margin-right: 5px;">
+                <span>{{ user.profile.coins }}</span>
+              </div>
+            </li>
+            <li class="nav-item d-flex align-items-center ms-2">
+              <div class="d-flex align-items-center bg-light px-2 py-1 rounded">
+                <img src="/static/courses/additional/money.png" alt="Money" style="width: 20px; height: 20px; margin-right: 5px;">
+                <span>{{ user.profile.balance }} ₴</span>
+              </div>
+            </li>
 
-              <li class="nav-item dropdown">
+            
+              <!-- Блок з аватаркою та меню -->
+              <li class="nav-item dropdown ms-3">
                 <div class="d-flex align-items-center">
-                  <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}'s avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                  <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}'s avatar" 
+                       style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+            
                   <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 6px 10px;">
-                    {{user.username}}
-              </button>
-            </div>
+                    {{ user.username }}
+                  </button>
+                </div>
+            
+                <!-- Меню користувача -->
                 <ul class="dropdown-menu dropdown-menu-white">
-                  <li><a class="dropdown-item" href="/my-courses">Мої курси</a></li>                  
+                  <li><a class="dropdown-item" href="/my-courses">Мої курси</a></li>
                   <li><a class="dropdown-item" href="/profile/">Профіль</a></li>
                   <li><a class="dropdown-item" href="/logout">Вийти</a></li>
-                  {% comment %} <li><a class="dropdown-item" href="#">Something else here</a></li> {% endcomment %}
                 </ul>
               </li>
-
               {% else %}
             <li class="nav-item">
               <a class="nav-link active" href="/login">Увійти</a>
@@ -135,10 +153,9 @@
             <li class="nav-item active">
               <a class="nav-link" href="/signup">Зарейструватись</a>
             </li>
+              {% endif %}
+            </ul>
 
-            {% endif %}
-            
-          </ul>
         </div>
       </div>
       </nav>
