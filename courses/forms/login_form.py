@@ -1,8 +1,5 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from django import forms
-from django.contrib.auth import authenticate, login
-from django.forms import ValidationError
+from django.contrib.auth import authenticate
 
 
 class LoginForm(AuthenticationForm):

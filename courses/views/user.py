@@ -19,7 +19,7 @@ def user_profile(request):
         form = AvatarForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('user_profile')  # Перенаправлення на сторінку профілю після збереження аватара
+            return redirect('user_profile')
     else:
         form = AvatarForm(instance=profile)
 
@@ -30,14 +30,14 @@ def user_profile(request):
 def exchange_coins(request):
     if request.method == "POST":
         user_profile = request.user.profile
-        data = json.loads(request.body)  # Отримуємо JSON-запит
-        coins_to_exchange = int(data.get("coins", 0))  # Отримуємо введену кількість монет
+        data = json.loads(request.body)
+        coins_to_exchange = int(data.get("coins", 0))
 
-        settings = Settings.objects.first()  # Отримуємо актуальний курс
+        settings = Settings.objects.first()
         if not settings:
             return JsonResponse({"success": False, "message": "Курс обміну не налаштований"})
 
-        exchange_rate = settings.coin_rate  # Динамічний курс з БД
+        exchange_rate = settings.coin_rate
 
         if coins_to_exchange <= 0 or coins_to_exchange > user_profile.coins:
             return JsonResponse({"success": False, "message": "Некоректна кількість монет"})

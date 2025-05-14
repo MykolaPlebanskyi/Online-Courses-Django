@@ -1,9 +1,5 @@
-from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils import timezone
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -21,12 +17,18 @@ class Settings(models.Model):
 
 
 class Profile(models.Model):
+    ROLE_CHOICES = (
+        ('Студент', 'Студент'),
+        ('Викладач', 'Викладач'),
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='files/avatars/', default='files/avatars/default.png')
     registration_date = models.DateTimeField(default=timezone.now)
     start_test = models.BooleanField(default=False)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     coins = models.IntegerField(default=200)
+    courses = models.ManyToManyField('Course', through='UserCourse', related_name='students')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Студент')
 
     def exchange_coins(self, coins_to_exchange):
         """
@@ -34,23 +36,23 @@ class Profile(models.Model):
         """
         settings = Settings.objects.first()
         if not settings or coins_to_exchange <= 0 or coins_to_exchange > self.coins:
-            return False  # Перевірка на коректність операції
+            return False
 
-        coin_rate = settings.coin_rate  # Отримуємо актуальний курс
-        self.balance += coins_to_exchange / coin_rate  # Додаємо гривні
-        self.coins -= coins_to_exchange  # Віднімаємо монети
+        coin_rate = settings.coin_rate
+        self.balance += coins_to_exchange / coin_rate
+        self.coins -= coins_to_exchange
         self.save()
-        return True  # Операція успішна
+        return True
 
     def pay_for_course(self, course):
         """Оплата курсу через баланс"""
-        sell_price = course.price * (1 - course.discount / 100)  # Ціна зі знижкою
+        sell_price = course.price * (1 - course.discount / 100)
 
         if self.balance >= sell_price:
             self.balance -= sell_price
             self.save()
-            return True  # Оплата успішна
-        return False  # Недостатньо коштів
+            return True
+        return False
 
     def __str__(self):
         return f'У користувача {self.user}, баланс: {self.balance}, монет: {self.coins}'
@@ -63,5 +65,5 @@ class Profile(models.Model):
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+    if created and not hasattr(instance, 'profile'):
+        Profile.objects.create(user=instance, role='Студент')

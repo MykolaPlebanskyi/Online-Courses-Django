@@ -10,9 +10,9 @@
         font-size: 1.2rem
     }
     .alert {
-        background-color: #ffcccc; /* Червоний колір фону для помилки */
-        padding: 10px; /* Додатковий відступ для кращого вигляду */
-        margin-top: 20px; /* Відступ зверху для відокремлення від іншого вмісту */
+        background-color: #ffcccc;
+        padding: 10px;
+        margin-top: 20px;
         border-color: #ffcccc;
         color: black;
         font-size: 1.2rem
@@ -98,12 +98,6 @@
     }
 </script>
 {% endif %}
-
-{#{% if error %}#}
-{#    <div class="alert">#}
-{#        {{ error }}#}
-{#    </div>#}
-{#{% endif %}#}
     
     
 <script>
@@ -138,54 +132,6 @@
         }
     });
 </script>
-{#<script>#}
-{#    document.addEventListener("DOMContentLoaded", function () {#}
-{#        document.getElementById('continuePaymentBtn').addEventListener('click', function(event) {#}
-{#            event.preventDefault(); // Зупиняємо перехід за посиланням#}
-{##}
-{#            let url = this.getAttribute("href");#}
-{##}
-{#            // Виводимо URL для перевірки#}
-{#            console.log("Sending request to:", url);#}
-{##}
-{#            fetch(url, {#}
-{#                method: "POST",#}
-{#                headers: {#}
-{#                    "X-CSRFToken": "{{ csrf_token }}",  // Перевірте, чи правильно передається CSRF токен#}
-{#                    "Content-Type": "application/json"#}
-{#                },#}
-{#                body: JSON.stringify({})  // Тіло запиту, можна додавати додаткові дані, якщо необхідно#}
-{#            })#}
-{#            .then(response => {#}
-{#                if (!response.ok) {#}
-{#                    throw new Error('Network response was not ok');#}
-{#                }#}
-{#                return response.json();#}
-{#            })#}
-{#            .then(data => {#}
-{#                // Перевіряємо, чи статус успішний#}
-{#                if (data.status === "success") {#}
-{#                    // Якщо перенаправлення успішне, то робимо редирект#}
-{#                    console.log("Redirecting to:", data.redirect_url); // Для перевірки#}
-{#                    window.location.href = data.redirect_url;#}
-{#                } else {#}
-{#                    // Якщо статус не успішний, виводимо повідомлення про помилку#}
-{#                    let errorDiv = document.createElement("div");#}
-{#                    errorDiv.className = "alert alert-danger"; // Для стилю#}
-{#                    errorDiv.innerText = data.message;#}
-{##}
-{#                    let container = document.querySelector(".container.mt-4.mb-3");#}
-{#                    container.innerHTML = "";  // Очищаємо контейнер#}
-{#                    container.appendChild(errorDiv);  // Додаємо повідомлення про помилку#}
-{#                }#}
-{#            })#}
-{#            .catch(error => {#}
-{#                // Обробляємо помилки#}
-{#                console.error("Помилка:", error);#}
-{#            });#}
-{#        });#}
-{#    });#}
-{#</script>#}
 
 
 {% endblock %}

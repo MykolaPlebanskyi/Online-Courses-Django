@@ -1,6 +1,6 @@
 from django.db import models
+from courses.models import Profile
 from courses.models import Course
-from django.contrib.auth.models import User
 
 
 class UserCourse(models.Model):
@@ -9,13 +9,13 @@ class UserCourse(models.Model):
         ('Complete', 'Завершений'),
     )
 
-    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Active')
 
     def __str__(self):
-        return f'{self.user.username} - {self.course.name}'
+        return f'{self.profile.user.username} - {self.course.name}'
 
     class Meta:
         verbose_name = 'Курси користувачів'

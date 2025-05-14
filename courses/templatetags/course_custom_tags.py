@@ -6,7 +6,6 @@ from courses.models import UserCourse, Course
 register = template.Library()
 
 
-# 100 -> 10% --> mrp  - ( mrp * discount * 0.01 ) = selprice
 @register.simple_tag
 def cal_sellprice(price, discount):
     if discount is None or discount is 0:
@@ -23,13 +22,12 @@ def uah(price):
 
 @register.simple_tag
 def is_enrolled(request, course):
-    user = None
+    profile = None
     if not request.user.is_authenticated:
         return False
-        # i you are enrooled in this course you can watch every video
-    user = request.user
+    profile = request.user.profile
     try:
-        user_course = UserCourse.objects.get(user=user, course=course)
+        user_course = UserCourse.objects.get(profile=profile, course=course)
         return True
     except:
         return False

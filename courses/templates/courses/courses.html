@@ -10,23 +10,9 @@
     .price {
         font-size: 20px;
     }
-    {% comment %} .container {
-        background-image: url('/static/courses/files/thumbnail/123.jpg');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        /* Додайте інші стилі, які вам потрібні для блоку контенту */
-        /* Наприклад, розмір, відступи, кольори тексту і т. д. */
-    } {% endcomment %}
 </style>
 
 <div class="container mt-3 mb-3">
-    {% comment %} <div class="card mb-3 mx-auto p-2" style="width: 18rem;">
-        <div class="card-body">
-          <h2 class="card-title">Доступні курси</h2>
-        </div>
-      </div> {% endcomment %}
-      
     <div class="row gy-4 mx-auto">
         {% for course in courses %}
         <div class="col mx-auto">

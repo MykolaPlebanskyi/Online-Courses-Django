@@ -1,8 +1,6 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from courses.views import MyCoursesList, HomePageView, coursePage, SignupView, LoginView, signout, checkout, \
     process_test, take_test, user_profile, CoursesPageView, exchange_coins, pay_with_balance, select_language, placement_test, placement_take_test
-# from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
 

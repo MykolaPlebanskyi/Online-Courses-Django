@@ -1,5 +1,5 @@
 from django import forms
-from courses.models import PlacementQuestion, PlacementAnswer
+from courses.models import PlacementAnswer
 
 
 class PlacementTestForm(forms.Form):

@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from courses.models import Course, Video, UserCourse, Test, Answer, Question
-from django.shortcuts import HttpResponse
-# Create your views here.
+from courses.models import Course, Video, UserCourse, Test, Answer
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
-from django.db.models import Q
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -15,7 +12,7 @@ class MyCoursesList(ListView):
 
     def get_queryset(self):
         return UserCourse.objects.filter(
-            user=self.request.user,
+            profile=self.request.user.profile,
             course__active=True,
         )
 
@@ -35,10 +32,9 @@ def coursePage(request, slug):
         if request.user.is_authenticated is False:
             return redirect("login")
         else:
-            user = request.user
+            profile = request.user.profile
             try:
-                user_course, created = UserCourse.objects.get_or_create(user=user, course=course)
-                # Позначення, що користувач переглянув це відео
+                user_course, created = UserCourse.objects.get_or_create(profile=profile, course=course)
                 user_course.viewed = True
                 user_course.save()
             except:
@@ -55,23 +51,33 @@ def coursePage(request, slug):
 def take_test(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
 
-    try:
-        test = Test.objects.get(course=course)
-    except Test.DoesNotExist:
-        test = None
+    test = course.tests.first()
 
-    return render(request, 'courses/test_page.html', {'course': course, 'test': test})
+    context = {
+        'course': course,
+        'test': test
+    }
+
+    return render(request, 'courses/test_page.html', context)
 
 
-# Ваша функція process_test
 def process_test(request, course_id):
     if request.method == 'POST':
         course = get_object_or_404(Course, pk=course_id)
-        total_questions = Question.objects.filter(test__course=course).count()
+        test_id = request.POST.get('test_id')
+
+        if not test_id:
+            return redirect('take_test', course_id=course_id)
+
+        test = get_object_or_404(Test, pk=test_id)
+
+        if test not in course.tests.all():
+            return redirect('take_test', course_id=course_id)
+
+        total_questions = test.questions.count()
         correct_answers = 0
 
-        # Логіка для перевірки правильних відповідей
-        for question in Question.objects.filter(test__course=course):
+        for question in test.questions.all():
             answer_ids = request.POST.getlist(f'question_{question.id}', [])
             correct_answers_count = Answer.objects.filter(question=question, is_correct=True).count()
 
@@ -84,24 +90,20 @@ def process_test(request, course_id):
                 if correct:
                     correct_answers += 1
 
-        # Оцінка тесту
-        percentage = round((correct_answers / total_questions) * 100, 2)
+        percentage = round((correct_answers / total_questions) * 100, 2) if total_questions > 0 else 0
         incorrect_answers = total_questions - correct_answers
 
         if percentage == 100:
-            user = request.user
+            profile = request.user.profile
             try:
-                user_course = UserCourse.objects.get(user=user, course=course)
-                user_course.status = 'Complete'  # Оновлюємо статус на 'Complete'
+                user_course = UserCourse.objects.get(profile=profile, course=course)
+                user_course.status = 'Complete'
                 user_course.save()
             except UserCourse.DoesNotExist:
                 pass
 
-        # Отримання питань та відповідей для курсу
-        questions = Question.objects.filter(test__course=course)
         question_data = []
-
-        for question in questions:
+        for question in test.questions.all():
             correct_answers_for_question = Answer.objects.filter(question=question, is_correct=True)
             user_selected_answers_ids = request.POST.getlist(f'question_{question.id}', [])
             user_selected_answers = Answer.objects.filter(id__in=user_selected_answers_ids)
@@ -120,10 +122,11 @@ def process_test(request, course_id):
             'correct_answers': correct_answers,
             'total_questions': total_questions,
             'incorrect_answers': incorrect_answers,
-            'question_data': question_data,  # Додано дані про питання та відповіді
+            'question_data': question_data,
+            'test': test,
+            'course': course,
         })
 
-    # Якщо метод не POST, направте користувача на іншу сторінку або виведіть помилку
     return redirect('home')
 
 

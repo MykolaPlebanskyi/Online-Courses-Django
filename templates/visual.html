@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Структура таблиць</title>
+    <style>
+        table {
+            width: 60%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .table-container {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Структура таблиць у базі даних</h2>
+
+    {% for table, columns in tables_info.items() %}
+        <div class="table-container">
+            <h3 style="text-align: center;">Таблиця: {{ table }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Назва поля</th>
+                        <th>Тип даних</th>
+                        <th>Первинний ключ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for column in columns %}
+                        <tr>
+                            <td>{{ column.name }}</td>
+                            <td>{{ column.type }}</td>
+                            <td>{{ column.is_primary }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
